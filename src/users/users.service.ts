@@ -14,8 +14,8 @@ export class UsersService {
     const existing = await this.repo.findOne({ where: { email: dto.email } })
     if (existing) throw new ConflictException('Email already registered')
 
-    const passwordHash = await bcrypt.hash(dto.password, 10)
-    const user = this.repo.create({ ...dto, passwordHash })
+    const password = await bcrypt.hash(dto.password, 10)
+    const user = this.repo.create({ ...dto, password })
     return this.repo.save(user)
   }
 
@@ -36,7 +36,7 @@ export class UsersService {
   async update(id: string, dto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id)
     if (dto.password) {
-      dto['passwordHash'] = await bcrypt.hash(dto.password, 10)
+      dto['password'] = await bcrypt.hash(dto.password, 10)
       delete dto.password
     }
     Object.assign(user, dto)
@@ -51,7 +51,7 @@ export class UsersService {
   async validatePassword(email: string, password: string): Promise<User | null> {
     const user = await this.findByEmail(email)
     if (!user) return null
-    const valid = await bcrypt.compare(password, user.passwordHash)
+    const valid = await bcrypt.compare(password, user.password)
     return valid ? user : null
   }
 }

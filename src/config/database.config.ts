@@ -11,4 +11,5 @@ export const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => (
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: config.get('NODE_ENV') !== 'production', // auto-migrate in dev
   logging: config.get('NODE_ENV') === 'development',
+  ssl: false,
 })
