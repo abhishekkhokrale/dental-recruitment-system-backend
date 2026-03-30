@@ -14,16 +14,13 @@ export class UsersService {
     const existing = await this.repo.findOne({ where: { email: dto.email } })
     if (existing) throw new ConflictException('Email already registered')
 
-    const password = await bcrypt.hash(dto.password, 10)
-    const user = this.repo.create({ ...dto, password })
+    const passwordHash = await bcrypt.hash(dto.password, 10)
+    const user = this.repo.create({ ...dto, passwordHash })
     return this.repo.save(user)
   }
 
   findAll(): Promise<User[]> {
-    return this.repo.find({
-      select: ['id', 'name', 'email', 'role', 'createdAt'],
-      where: { deletedAt: null },
-    })
+    return this.repo.find({ select: ['id', 'name', 'email', 'role', 'isActive', 'createdAt'] })
   }
 
   async findById(id: string): Promise<User> {
@@ -39,7 +36,7 @@ export class UsersService {
   async update(id: string, dto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id)
     if (dto.password) {
-      (user as any).password = await bcrypt.hash(dto.password, 10)
+      dto['passwordHash'] = await bcrypt.hash(dto.password, 10)
       delete dto.password
     }
     Object.assign(user, dto)
@@ -48,13 +45,13 @@ export class UsersService {
 
   async remove(id: string): Promise<void> {
     const user = await this.findById(id)
-    await this.repo.softRemove(user)
+    await this.repo.remove(user)
   }
 
-  async validatePassword(email: string, plainPassword: string): Promise<User | null> {
+  async validatePassword(email: string, password: string): Promise<User | null> {
     const user = await this.findByEmail(email)
     if (!user) return null
-    const valid = await bcrypt.compare(plainPassword, user.password)
+    const valid = await bcrypt.compare(password, user.passwordHash)
     return valid ? user : null
   }
 }
