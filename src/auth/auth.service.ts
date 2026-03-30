@@ -24,7 +24,6 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.usersService.validatePassword(dto.email, dto.password)
     if (!user) throw new UnauthorizedException('Invalid credentials')
-    if (!user.isActive) throw new UnauthorizedException('Account is suspended')
     return this.signToken(user.id, user.name, user.email, user.role)
   }
 

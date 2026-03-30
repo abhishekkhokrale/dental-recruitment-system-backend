@@ -9,6 +9,6 @@ export const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => (
   password: config.get('DB_PASSWORD', 'postgres'),
   database: config.get('DB_NAME', 'dental_recruitment'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: config.get('NODE_ENV') !== 'production', // auto-migrate in dev
+  synchronize: false, // schema already created via SQL script
   logging: config.get('NODE_ENV') === 'development',
 })

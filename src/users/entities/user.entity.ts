@@ -1,6 +1,7 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany,
+  CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  OneToOne, OneToMany,
 } from 'typeorm'
 import { Clinic } from '../../clinics/entities/clinic.entity'
 import { Application } from '../../applications/entities/application.entity'
@@ -12,32 +13,50 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true })
-  email: string
-
-  @Column()
-  passwordHash: string
-
-  @Column()
+  @Column({ type: 'text' })
   name: string
 
-  @Column({ type: 'enum', enum: ['seeker', 'clinic', 'admin'], default: 'seeker' })
+  @Column({ type: 'text', unique: true })
+  email: string
+
+  @Column({ type: 'text', name: 'password' })
+  password: string
+
+  @Column({ type: 'text', default: 'seeker' })
   role: UserRole
 
-  @Column({ nullable: true })
-  avatarUrl: string
+  @Column({ type: 'text', nullable: true })
+  prefecture: string | null
 
-  @Column({ nullable: true })
-  lineId: string
+  @Column({ type: 'text', array: true, nullable: true })
+  qualifications: string[] | null
 
-  @Column({ default: true })
-  isActive: boolean
+  @Column({ type: 'int', nullable: true, name: 'experienceyears' })
+  experienceYears: number | null
 
-  @CreateDateColumn()
+  @Column({ type: 'text', array: true, nullable: true, name: 'employmenttypes' })
+  employmentTypes: string[] | null
+
+  @Column({ type: 'numeric', nullable: true, name: 'desiredsalarymin' })
+  desiredSalaryMin: number | null
+
+  @Column({ type: 'text', nullable: true })
+  bio: string | null
+
+  @Column({ type: 'text', default: 'email' })
+  provider: string
+
+  @Column({ type: 'text', nullable: true, name: 'lineid' })
+  lineId: string | null
+
+  @CreateDateColumn({ name: 'createdat' })
   createdAt: Date
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updatedat' })
   updatedAt: Date
+
+  @DeleteDateColumn({ name: 'deletedat', nullable: true })
+  deletedAt: Date | null
 
   // Relations
   @OneToOne(() => Clinic, (clinic) => clinic.user)
