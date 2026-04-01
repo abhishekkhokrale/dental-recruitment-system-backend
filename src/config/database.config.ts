@@ -8,7 +8,7 @@ export const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => (
   port: config.get<number>('DB_PORT', 5432),
   username: config.get('DB_USER', 'postgres'),
   password: config.get('DB_PASSWORD', 'postgres'),
-  database: config.get('DB_NAME', 'dental_recruitment2'),
+  database: config.get('DB_NAME', 'dental_recruitment'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
  // dropSchema: config.get('NODE_ENV') === 'development',  // ⚠️ DROP+RECREATE on every boot — remove after first clean start
   synchronize: config.get('NODE_ENV') !== 'production', // auto-migrate in dev
