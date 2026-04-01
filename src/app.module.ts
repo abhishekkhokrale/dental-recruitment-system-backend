@@ -7,33 +7,28 @@ import { UsersModule } from './users/users.module'
 import { ClinicsModule } from './clinics/clinics.module'
 import { JobsModule } from './jobs/jobs.module'
 import { ApplicationsModule } from './applications/applications.module'
+import { StatsModule } from './stats/stats.module'
 import { databaseConfig } from './config/database.config'
 import { redisConfig } from './config/redis.config'
 
 @Module({
   imports: [
-    // Config — loads .env
     ConfigModule.forRoot({ isGlobal: true }),
-
-    // PostgreSQL via TypeORM
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: databaseConfig,
     }),
-
-    // Redis cache
     CacheModule.registerAsync({
       isGlobal: true,
       inject: [ConfigService],
       useFactory: redisConfig,
     }),
-
-    // Feature modules
     AuthModule,
     UsersModule,
     ClinicsModule,
     JobsModule,
     ApplicationsModule,
+    StatsModule,
   ],
 })
 export class AppModule {}

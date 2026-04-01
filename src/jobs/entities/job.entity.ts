@@ -1,6 +1,7 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany,
+  CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, JoinColumn, OneToMany,
 } from 'typeorm'
 import { Clinic } from '../../clinics/entities/clinic.entity'
 import { Application } from '../../applications/entities/application.entity'
@@ -14,73 +15,78 @@ export class Job {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column()
+  @Column({ type: 'text' })
   title: string
 
-  @Column({ type: 'enum', enum: ['歯科衛生士', '歯科医師', '歯科助手', '歯科技工士', '受付・事務'] })
+  @Column({ type: 'text', name: 'jobtype' })
   jobType: JobType
 
-  @Column({ type: 'enum', enum: ['正社員', 'パート・アルバイト', '契約社員', '派遣社員'] })
+  @Column({ type: 'text', name: 'employmenttype' })
   employmentType: EmploymentType
 
-  @Column()
+  @Column({ type: 'text' })
   prefecture: string
 
-  @Column({ nullable: true })
-  city: string
+  @Column({ type: 'text', nullable: true })
+  city: string | null
 
-  @Column({ nullable: true })
-  address: string
+  @Column({ type: 'text', nullable: true })
+  address: string | null
 
-  @Column()
+  @Column({ type: 'numeric', name: 'salarymin' })
   salaryMin: number
 
-  @Column()
+  @Column({ type: 'numeric', name: 'salarymax' })
   salaryMax: number
 
-  @Column({ type: 'enum', enum: ['月給', '時給', '年収'], default: '月給' })
+  @Column({ type: 'text', default: '月給', name: 'salarytype' })
   salaryType: SalaryType
 
-  @Column('text')
+  @Column({ type: 'text' })
   description: string
 
-  @Column('simple-array', { nullable: true })
+  @Column({ type: 'simple-array', nullable: true })
   requirements: string[]
 
-  @Column('simple-array', { nullable: true })
+  @Column({ type: 'simple-array', nullable: true })
   benefits: string[]
 
-  @Column({ nullable: true })
-  workingHours: string
+  @Column({ type: 'text', nullable: true, name: 'workinghours' })
+  workingHours: string | null
 
-  @Column({ nullable: true })
-  holidays: string
+  @Column({ type: 'text', nullable: true })
+  holidays: string | null
 
   @Column({ type: 'date', nullable: true })
-  deadline: string
+  deadline: string | null
 
-  @Column({ default: true })
+  @Column({ type: 'boolean', default: true, name: 'isactive' })
   isActive: boolean
 
-  @Column({ default: 0 })
+  @Column({ type: 'boolean', default: false, name: 'isfeatured' })
+  isFeatured: boolean
+
+  @Column({ type: 'int', default: 0, name: 'viewcount' })
   viewCount: number
 
-  @Column({ default: 0 })
+  @Column({ type: 'int', default: 0, name: 'applicationcount' })
   applicationCount: number
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'postedat' })
   postedAt: Date
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updatedat' })
   updatedAt: Date
 
-  // Relations
-  @ManyToOne(() => Clinic, (clinic) => clinic.jobs)
-  @JoinColumn()
-  clinic: Clinic
+  @DeleteDateColumn({ name: 'deletedat', nullable: true })
+  deletedAt: Date | null
 
-  @Column()
+  @Column({ type: 'uuid', name: 'clinicid' })
   clinicId: string
+
+  @ManyToOne(() => Clinic, (clinic) => clinic.jobs)
+  @JoinColumn({ name: 'clinicid' })
+  clinic: Clinic
 
   @OneToMany(() => Application, (app) => app.job)
   applications: Application[]
