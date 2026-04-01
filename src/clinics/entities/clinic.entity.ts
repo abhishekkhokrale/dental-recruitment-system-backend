@@ -1,6 +1,7 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, OneToMany,
+  CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  OneToOne, JoinColumn, OneToMany,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
 import { Job } from '../../jobs/entities/job.entity'
@@ -12,46 +13,48 @@ export class Clinic {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column()
+  @Column({ type: 'text', name: 'clinicname' })
   clinicName: string
 
-  @Column()
+  @Column({ type: 'text' })
   prefecture: string
 
-  @Column({ nullable: true })
-  city: string
+  @Column({ type: 'text', nullable: true })
+  city: string | null
 
-  @Column({ nullable: true })
-  address: string
+  @Column({ type: 'text', nullable: true })
+  address: string | null
 
-  @Column({ nullable: true })
-  phone: string
+  @Column({ type: 'text', nullable: true })
+  phone: string | null
 
-  @Column({ nullable: true })
-  website: string
+  @Column({ type: 'text', nullable: true })
+  website: string | null
 
-  @Column({ nullable: true })
-  description: string
+  @Column({ type: 'text', nullable: true })
+  description: string | null
 
-  @Column({ nullable: true })
-  logoUrl: string
+  @Column({ type: 'text', nullable: true, name: 'logourl' })
+  logoUrl: string | null
 
-  @Column({ type: 'enum', enum: ['active', 'pending', 'suspended'], default: 'pending' })
+  @Column({ type: 'text', default: 'pending' })
   status: ClinicStatus
 
-  @CreateDateColumn()
+  @Column({ type: 'uuid', name: 'userid' })
+  userId: string
+
+  @CreateDateColumn({ name: 'createdat' })
   createdAt: Date
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updatedat' })
   updatedAt: Date
 
-  // Relations
-  @OneToOne(() => User, (user) => user.clinic)
-  @JoinColumn()
-  user: User
+  @DeleteDateColumn({ name: 'deletedat', nullable: true })
+  deletedAt: Date | null
 
-  @Column()
-  userId: string
+  @OneToOne(() => User, (user) => user.clinic)
+  @JoinColumn({ name: 'userid' })
+  user: User
 
   @OneToMany(() => Job, (job) => job.clinic)
   jobs: Job[]

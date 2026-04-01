@@ -1,54 +1,47 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn,
+  CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, JoinColumn,
 } from 'typeorm'
 import { User } from '../../users/entities/user.entity'
 import { Job } from '../../jobs/entities/job.entity'
 
-export type ApplicationStatus =
-  | 'applied'      // 応募済み
-  | 'reviewing'    // 書類選考中
-  | 'interview'    // 面接調整中
-  | 'offered'      // 内定
-  | 'rejected'     // 不採用
-  | 'withdrawn'    // 辞退
+export type ApplicationStatus = 'applied' | 'reviewing' | 'interview' | 'offered' | 'rejected' | 'withdrawn'
 
 @Entity('applications')
 export class Application {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({
-    type: 'enum',
-    enum: ['applied', 'reviewing', 'interview', 'offered', 'rejected', 'withdrawn'],
-    default: 'applied',
-  })
+  @Column({ type: 'text', default: 'applied' })
   status: ApplicationStatus
 
-  @Column('text', { nullable: true })
-  message: string
+  @Column({ type: 'text', nullable: true })
+  message: string | null
 
-  @Column('text', { nullable: true })
-  resumeUrl: string
+  @Column({ type: 'text', nullable: true, name: 'resumeurl' })
+  resumeUrl: string | null
 
-  @CreateDateColumn()
-  appliedAt: Date
-
-  @UpdateDateColumn()
-  updatedAt: Date
-
-  // Relations
-  @ManyToOne(() => User, (user) => user.applications)
-  @JoinColumn()
-  seeker: User
-
-  @Column()
+  @Column({ type: 'uuid', name: 'seekerid' })
   seekerId: string
 
-  @ManyToOne(() => Job, (job) => job.applications)
-  @JoinColumn()
-  job: Job
-
-  @Column()
+  @Column({ type: 'uuid', name: 'jobid' })
   jobId: string
+
+  @CreateDateColumn({ name: 'appliedat' })
+  appliedAt: Date
+
+  @UpdateDateColumn({ name: 'updatedat' })
+  updatedAt: Date
+
+  @DeleteDateColumn({ name: 'deletedat', nullable: true })
+  deletedAt: Date | null
+
+  @ManyToOne(() => User, (user) => user.applications)
+  @JoinColumn({ name: 'seekerid' })
+  seeker: User
+
+  @ManyToOne(() => Job, (job) => job.applications)
+  @JoinColumn({ name: 'jobid' })
+  job: Job
 }
