@@ -11,8 +11,8 @@ export const databaseConfig = (config: ConfigService): TypeOrmModuleOptions => (
   database: config.get('DB_NAME', 'dental_recruitment'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
  // dropSchema: config.get('NODE_ENV') === 'development',  // ⚠️ DROP+RECREATE on every boot — remove after first clean start
-  synchronize: config.get('NODE_ENV') !== 'production', // auto-migrate in dev
+  synchronize: config.get('NODE_ENV') === 'development', // auto-migrate in dev only
   logging: config.get('NODE_ENV') === 'development',
-  ssl: false,
+  ssl: config.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
   namingStrategy: new SnakeNamingStrategy(),
 })
